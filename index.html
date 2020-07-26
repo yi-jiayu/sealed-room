@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sealed Room</title>
+</head>
+<body>
+<div>
+  <form>
+    <input id="left" type="number" value="0">
+    <input id="middle" type="number" value="0">
+    <input id="right" type="number" value="0">
+    <div>
+      <button type="submit">Check</button>
+    </div>
+    <div>
+      <button type="reset">Reset</button>
+    </div>
+    <div>
+      <button id="newGame">Play again</button>
+    </div>
+  </form>
+  <div id="result"></div>
+</div>
+<script>
+  const form = document.querySelector('form');
+  const platforms = {
+    left: document.getElementById('left'),
+    middle: document.getElementById('middle'),
+    right: document.getElementById('right'),
+  }
+  const result = document.getElementById('result');
+
+  let solution;
+
+  // Adapted from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#Getting_a_random_integer_between_two_values
+  function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+  }
+
+  function generateSolution() {
+    const first = getRandomInt(0, 6);
+    const second = getRandomInt(0, 6 - first);
+    const third = 5 - first - second;
+    switch (getRandomInt(0, 6)) {
+      case 0:
+        return [first, second, third];
+      case 1:
+        return [first, third, second];
+      case 2:
+        return [second, first, third];
+      case 3:
+        return [second, third, first];
+      case 4:
+        return [third, first, second];
+      case 5:
+        return [third, second, first];
+    }
+  }
+
+  function playAgain() {
+    solution = generateSolution();
+    console.log(solution);
+  }
+
+  function check() {
+    let correct = 0;
+    let left = Number(platforms.left.value);
+    let middle = Number(platforms.middle.value);
+    let right = Number(platforms.right.value);
+
+    if (left + middle + right !== 5) {
+      result.textContent = 'Must add up to 5!';
+      return;
+    }
+
+    if (left === solution[0]) {
+      correct++;
+    }
+    if (middle === solution[1]) {
+      correct++;
+    }
+    if (right === solution[2]) {
+      correct++;
+    }
+
+    switch (correct) {
+      case 0:
+        result.textContent = 'All wrong!';
+        break;
+      case 1:
+        result.textContent = 'One correct!';
+        break;
+      case 3:
+        result.textContent = 'Correct!';
+        break;
+    }
+  }
+
+  playAgain();
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    check();
+  });
+
+  document.getElementById('newGame').addEventListener('click', function (e) {
+    e.preventDefault();
+    playAgain();
+  });
+</script>
+</body>
+</html>
